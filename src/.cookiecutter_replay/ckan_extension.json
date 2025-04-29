@@ -1,0 +1,31 @@
+{
+  "cookiecutter": {
+    "project": "ckanext-test",
+    "keywords": "CKAN",
+    "description": "less",
+    "author": "Gibs",
+    "author_email": "dc03@igp.gob.pe",
+    "github_user_name": "Gigiorg",
+    "project_shortname": "test",
+    "plugin_class_name": "TestPlugin",
+    "include_examples": "1",
+    "ckan_version": "2.11",
+    "_source": "cli",
+    "_template": "/srv/app/src/ckan/contrib/cookiecutter/ckan_extension",
+    "_output_dir": "/srv/app/src_extensions",
+    "_repo_dir": "/srv/app/src/ckan/contrib/cookiecutter/ckan_extension",
+    "_checkout": null
+  },
+  "_cookiecutter": {
+    "project": "ckanext-test",
+    "keywords": "CKAN",
+    "description": "less",
+    "author": "Gibs",
+    "author_email": "dc03@igp.gob.pe",
+    "github_user_name": "Gigiorg",
+    "project_shortname": "test",
+    "plugin_class_name": "TestPlugin",
+    "include_examples": 1,
+    "ckan_version": "2.11"
+  }
+}
