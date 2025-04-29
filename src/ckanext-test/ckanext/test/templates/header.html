@@ -1,0 +1,9 @@
+{% ckan_extends %}
+
+{% block header_site_navigation_tabs %}
+  {{ super() }}
+
+  <li>
+    <a href="{{ h.url_for('test_plugin.custom_route') }}">Dataverse IGP</a>
+  </li>
+{% endblock %}

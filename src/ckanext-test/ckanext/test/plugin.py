@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 class TestPlugin(SingletonPlugin):
     implements(IBlueprint)
     implements(IConfigurer)
+    #implements(IBootstrap)
 
     
     # plugins.implements(plugins.IAuthFunctions)
@@ -34,8 +35,8 @@ class TestPlugin(SingletonPlugin):
     def get_blueprint(self):
         test_bp = Blueprint('test_plugin', __name__, url_prefix='')
 
-        @test_bp.route('/')
-        def home():
+        @test_bp.route('/my_template.html')
+        def custom_route():
             api_token = '14350175-e540-46db-979f-62916e8c4185'
             server_url = 'http://192.168.220.68:8080'
             dataset_id = 'REDGEN_GNSS_ATIC'
@@ -81,13 +82,21 @@ class TestPlugin(SingletonPlugin):
             except Exception as e:
                 data = {"error": str(e)}
 
-            return render_template('home.html', list1=doi_data, list2 =title_data, list3=type_data, count=len(type_data))
+            return render_template('my_template.html', list1=doi_data, list2 =title_data, list3=type_data, count=len(type_data))
+        
+        # @test_bp.route('/my_template.html')
+        # def custom_route():
+
+        #     list=['2', '3']
+          
+        #     return render_template('my_template.html', list1=list)
 
 
         return test_bp
     
     def before_map(self, map):
-        map.connect('home', '/', controller='ckanext.test.controller:TestController', action='index')
+        # map.connect('home', '/', controller='ckanext.test.controller:TestController', action='index')
+        map.connect('custom_route','/custom_route', controller='ckanext.test.controller:TestController', action='custom_route' )
         return map
     # IConfigurer
     
