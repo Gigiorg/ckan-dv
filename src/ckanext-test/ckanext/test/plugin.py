@@ -1,10 +1,13 @@
-import ckan.plugins as plugins
-import ckan.plugins.toolkit as toolkit
-from ckan.plugins.interfaces import IBlueprint
+from ckan.plugins import implements, SingletonPlugin
+from ckan.plugins.interfaces import IBlueprint, IConfigurer
 from flask import Blueprint, render_template, request
+import ckan.plugins.toolkit as toolkit
 import os
 import requests
 import json
+import logging
+
+log = logging.getLogger(__name__)
 
 
 # import ckanext.test.cli as cli
@@ -15,9 +18,10 @@ import json
 # )
 
 
-class TestPlugin(plugins.SingletonPlugin):
-    plugins.implements(IBlueprint)
-    plugins.implements(plugins.IConfigurer)
+class TestPlugin(SingletonPlugin):
+    implements(IBlueprint)
+    implements(IConfigurer)
+
     
     # plugins.implements(plugins.IAuthFunctions)
     # plugins.implements(plugins.IActions)
@@ -32,24 +36,60 @@ class TestPlugin(plugins.SingletonPlugin):
 
         @test_bp.route('/')
         def home():
-            api_token = 'b50f1991-d20f-4ed3-b071-5f301f86a265'
-            server_url = 'http://192.168.220.58:8080'
-            dataset_id = 'root'
+            api_token = '14350175-e540-46db-979f-62916e8c4185'
+            server_url = 'http://192.168.220.68:8080'
+            dataset_id = 'REDGEN_GNSS_ATIC'
 
             url = f"{server_url}/api/dataverses/{dataset_id}/contents"
             headers = {"X-Dataverse-key": api_token}
-            
+
+            #Columnas de las tablas
+            type_data = []  
+            title_data = []
+            doi_data = []
         
             try:
-                #response = requests.get(url, headers=headers)
-                response = requests.get(url)
+                response = requests.get(url, headers=headers)
                 data = response.json() if response.status_code == 200 else {"error": "Failed to fetch data"}
+                
+                #IDS de datasets que componen la coleccion
+                ids = [ val["id"] for val in data["data"]]
+                print(ids)
+
+                for val in data["data"]:
+                    #doi_data.append(val["protocol"] +":" + val["authority"] + val["separator"] + val["identifier"])
+                    doi_data.append(val["protocol"] +":" + val["authority"] + val["identifier"])
+                    print(val)
+                    
+
+
+                for i in ids:
+
+                    url_metadata_redgen = f"{server_url}/api/datasets/{i}/versions/:draft/metadata/redgen_metadata"
+                    response_meta=requests.get(url_metadata_redgen, headers=headers)
+                    type_data.append( response_meta.json()["data"]["fields"][1]["value"])
+
+                    url_metadata_citation = f"{server_url}/api/datasets/{i}/versions/:draft/metadata/citation"
+                    response_meta=requests.get(url_metadata_citation, headers=headers)
+                    title_data.append( response_meta.json()["data"]["fields"][0]["value"])
+
+                    #for j in data_f
+
+
+            
+                print(id)
             except Exception as e:
                 data = {"error": str(e)}
 
-            return render_template('home.html', data=json.dumps(data, indent=2))
+            return render_template('home.html', list1=doi_data, list2 =title_data, list3=type_data, count=len(type_data))
+
 
         return test_bp
+    
+    def before_map(self, map):
+        map.connect('home', '/', controller='ckanext.test.controller:TestController', action='index')
+        return map
+    # IConfigurer
     
     def update_config(self, config_):
         # Register template directory
